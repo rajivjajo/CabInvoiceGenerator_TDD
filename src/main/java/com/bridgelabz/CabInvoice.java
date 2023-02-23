@@ -3,6 +3,11 @@ package com.bridgelabz;
 public class CabInvoice {
     static final double COST_PER_KM = 10;
     static final double COST_PER_MIN = 1;
+    private RideRepo rideRepository;
+
+    public CabInvoice() {
+        this.rideRepository = new RideRepo();
+    }
 
     public double calculateFare(double distance, double time) {
         double fare = COST_PER_KM * distance + COST_PER_MIN * time;
@@ -24,4 +29,13 @@ public class CabInvoice {
         double averageFare = totalFare/totalRide;
         return new Invoice(totalRide,totalFare,averageFare);
     }
+
+    public void addRides(String userId, Ride[] ride) {
+        rideRepository.addRide(userId, ride);
+    }
+
+    public Invoice getInvoice(String userId) {
+        return this.generateInvoice(rideRepository.getRides(userId));
+    }
+
 }
