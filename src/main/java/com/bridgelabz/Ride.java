@@ -1,18 +1,11 @@
 package com.bridgelabz;
 
 public class Ride {
-    private double distance;
-    private double time ;
-    public Ride(double distance, double time) {
+    public double distance;
+    public int time;
+
+    public Ride(double distance, int time) {
         this.distance = distance;
         this.time = time;
-    }
-
-    public double getDistance() {
-        return distance;
-    }
-
-    public double getTime() {
-        return time;
     }
 }
