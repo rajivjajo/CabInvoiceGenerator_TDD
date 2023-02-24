@@ -1,41 +1,35 @@
 package com.bridgelabz;
 
 public class CabInvoice {
-    static final double COST_PER_KM = 10;
-    static final double COST_PER_MIN = 1;
-    private RideRepo rideRepository;
-
-    public CabInvoice() {
-        this.rideRepository = new RideRepo();
+    private static final double MIN_COST_PER_KM = 10.0;
+    private static final double MIN_FARE = 5;
+    public final double COST_PER_TIME = 1.0;
+    private static final double MIN_COST_PER_KM_PREMIUM = 15.0;
+    private static final double MIN_FARE_PREMIUM = 20;
+    public final double COST_PER_TIME_PREMIUM = 2.0;
+    public double calculateFare(double distance, int time) {
+        double totalFare = distance * MIN_COST_PER_KM + time * COST_PER_TIME;
+        return Math.max(totalFare, MIN_FARE);
     }
 
-    public double calculateFare(double distance, double time) {
-        double fare = COST_PER_KM * distance + COST_PER_MIN * time;
-        return fare < 5 ? 5 : fare;
-    }
-    public double calculateFare(Ride[] rides) {
-        double aggregateFare = 0 ;
-        for (Ride ride:rides) {
-            double totalFare = calculateFare(ride.getDistance(),ride.getTime());
-            aggregateFare += totalFare;
-
+    public Invoice calculateFare(Ride[] rides) {
+        double totalFare = 0.0;
+        for (Ride ride : rides) {
+            totalFare += this.calculateFare(ride.distance, ride.time);
         }
-        return aggregateFare;
+        return new Invoice(rides.length, totalFare);
     }
 
-    public Invoice generateInvoice(Ride[] rides) {
-        int totalRide = rides.length;
-        double totalFare = calculateFare(rides);
-        double averageFare = totalFare/totalRide;
-        return new Invoice(totalRide,totalFare,averageFare);
+    public double calculateRideFare(String rideType, double distance, int time) {
+        double totalFare, fare = 0;
+        if (rideType.equalsIgnoreCase("normal")) {
+            totalFare = distance * MIN_COST_PER_KM + time * COST_PER_TIME;
+            fare = Math.max(totalFare, MIN_FARE);
+        }
+        else if (rideType.equalsIgnoreCase("premium")) {
+            totalFare = distance * MIN_COST_PER_KM_PREMIUM + time * COST_PER_TIME_PREMIUM;
+            fare = Math.max(totalFare, MIN_FARE_PREMIUM);
+        }
+        return fare;
     }
-
-    public void addRides(String userId, Ride[] ride) {
-        rideRepository.addRide(userId, ride);
-    }
-
-    public Invoice getInvoice(String userId) {
-        return this.generateInvoice(rideRepository.getRides(userId));
-    }
-
 }
